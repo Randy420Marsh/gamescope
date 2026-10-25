@@ -1527,7 +1527,12 @@ namespace gamescope
 
     std::span<const char *const> CWaylandBackend::GetInstanceExtensions() const
     {
-        return std::span<const char *const>{};
+        static const char *const s_InstanceExtensions[] = {
+            "VK_KHR_wayland_surface",
+            "VK_KHR_surface",
+            "VK_EXT_surface_maintenance1",
+        };
+        return std::span<const char *const>(s_InstanceExtensions);
     }
 
     std::span<const char *const> CWaylandBackend::GetDeviceExtensions( VkPhysicalDevice pVkPhysicalDevice ) const
@@ -2113,9 +2118,9 @@ namespace gamescope
         {
             m_pViewporter = (wp_viewporter *)wl_registry_bind( pRegistry, uName, &wp_viewporter_interface, 1u );
         }
-        else if ( !strcmp( pInterface, wl_seat_interface.name ) && uVersion >= 8u )
+        else if ( !strcmp( pInterface, wl_seat_interface.name ) && uVersion >= 7u )
         {
-            m_pSeat = (wl_seat *)wl_registry_bind( pRegistry, uName, &wl_seat_interface, 8u );
+            m_pSeat = (wl_seat *)wl_registry_bind( pRegistry, uName, &wl_seat_interface, 7u );
             wl_seat_add_listener( m_pSeat, &s_SeatListener, this );
         }
         else if ( !strcmp( pInterface, wp_presentation_interface.name ) )
@@ -2510,9 +2515,9 @@ namespace gamescope
 
     void CWaylandInputThread::Wayland_Registry_Global( wl_registry *pRegistry, uint32_t uName, const char *pInterface, uint32_t uVersion )
     {
-        if ( !strcmp( pInterface, wl_seat_interface.name ) && uVersion >= 8u )
+        if ( !strcmp( pInterface, wl_seat_interface.name ) && uVersion >= 7u )
         {
-            m_pSeat = (wl_seat *)wl_registry_bind( pRegistry, uName, &wl_seat_interface, 8u );
+            m_pSeat = (wl_seat *)wl_registry_bind( pRegistry, uName, &wl_seat_interface, 7u );
             wl_seat_add_listener( m_pSeat, &s_SeatListener, this );
         }
         else if ( !strcmp( pInterface, zwp_relative_pointer_manager_v1_interface.name ) )
